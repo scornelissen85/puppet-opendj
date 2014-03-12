@@ -19,7 +19,7 @@ class opendj (
   $jmx_port        = hiera('opendj::jmx_port', '1689'),
   $admin_user      = hiera('opendj::admin_user', 'cn=Directory Manager'),
   $admin_password  = hiera('opendj::admin_password'),
-  $base_dn         = hiera('opendj::base_dn'),
+  $base_dn         = hiera('opendj::base_dn', 'dc=example,dc=com'),
   $home            = hiera('opendj::home', '/opt/opendj'),
   $user            = hiera('opendj::user', 'opendj'),
   $group           = hiera('opendj::group', 'opendj'),
