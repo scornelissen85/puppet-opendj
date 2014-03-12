@@ -28,7 +28,6 @@ class opendj (
   $master          = hiera('opendj::master', undef),
   $java_properties = hiera('opendj::java_properties', undef),
 ) {
-  validate_hash($java_properties)
   $common_opts   = "-h ${host} -D '${opendj::admin_user}' -w ${opendj::admin_password}"
   $ldapsearch    = "${opendj::home}/bin/ldapsearch ${common_opts} -p ${opendj::ldap_port}"
   $ldapmodify    = "${opendj::home}/bin/ldapmodify ${common_opts} -p ${opendj::ldap_port}"
@@ -158,5 +157,9 @@ class opendj (
       refreshonly => true,
     }
   }
-  create_resources('opendj::java_property', $java_properties)
+
+  if !empty($java_properties) {
+    validate_hash($java_properties)
+    create_resources('opendj::java_property', $java_properties)
+  }
 }
