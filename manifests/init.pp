@@ -53,7 +53,6 @@ class opendj (
     ensure => directory,
     owner => $user,
     group => $group,
-    recurse => true,
     require => [User["${user}"], Package["opendj"]],
   }
 
