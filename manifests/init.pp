@@ -122,8 +122,7 @@ class opendj (
   }
 
   exec { "create base dn":
-    command => "${home}/bin/ldapmodify -a -D '${admin_user}' \
-        -w '${admin_password}' -h ${host} -p ${ldap_port} -f '${tmp}/base_dn.ldif'",
+    command => "/bin/su ${user} -s /bin/bash -c \"${ldapmodify} -a -f '${tmp}/base_dn.ldif'\"",
     refreshonly => true,
   }
 
