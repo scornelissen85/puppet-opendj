@@ -33,6 +33,8 @@ class opendj (
   $ldapmodify    = "${opendj::home}/bin/ldapmodify ${common_opts} -p ${opendj::ldap_port}"
   $dsconfig      = "${opendj::home}/bin/dsconfig   ${common_opts} -p ${opendj::admin_port} -X -n"
   $dsreplication = "${opendj::home}/bin/dsreplication --adminUID admin --adminPassword ${admin_password} -X -n"
+  $props_file    = "${tmp}/opendj.properties"
+  $base_dn_file  = "${tmp}/base_dn.ldif"
 
   package { "opendj":
     ensure => present,
@@ -56,23 +58,25 @@ class opendj (
     require => [User["${user}"], Package["opendj"]],
   }
 
-  file { "${tmp}/opendj.properties":
+  file { "${props_file}":
     ensure => file,
     content => template("${module_name}/setup.erb"),
     owner  => $user,
     group  => $group,
     mode => 0600,
-    require => File["${home}"],
+    require => [File["${home}"], File["${base_dn_file}"]],
+#    require => File["${home}"],
   }
 
-  file { "${tmp}/base_dn.ldif":
+  file { "${base_dn_file}":
     ensure => file,
     content => template("${module_name}/base_dn.ldif.erb"),
     owner => $user,
     group => $group,
     mode => 0600,
-    require => [User["${user}"], Service['opendj']],
-    notify => Exec["create base dn"],
+    require => User["${user}"],
+#    require => [User["${user}"], Service['opendj']],
+#    notify => Exec["create base dn"],
   }
 
   file_line { 'file_limits_soft':
@@ -88,9 +92,9 @@ class opendj (
   }
 
   exec { "configure opendj":
-    require => File["${tmp}/opendj.properties"],
+    require => File["${props_file}"],
     command => "/bin/su opendj -s /bin/bash -c '${home}/setup -i \
-        -n -Q --acceptLicense --doNotStart --propertiesFilePath ${tmp}/opendj.properties'",
+        -n -Q --acceptLicense --doNotStart --propertiesFilePath ${props_file}'",
     creates => "${home}/config",
     notify => Exec['create RC script'],
   }
@@ -121,10 +125,10 @@ class opendj (
       $dsconfig get-global-configuration-prop | grep 'reject-unauthenticated-requests' | grep true\"",
   }
 
-  exec { "create base dn":
-    command => "/bin/su ${user} -s /bin/bash -c \"${ldapmodify} -a -f '${tmp}/base_dn.ldif'\"",
-    refreshonly => true,
-  }
+#  exec { "create base dn":
+#    command => "/bin/su ${user} -s /bin/bash -c \"${ldapmodify} -a -f '${base_dn_file}'\"",
+#    refreshonly => true,
+#  }
 
   exec { "set single structural objectclass behavior":
     command => "${dsconfig} --advanced set-global-configuration-prop --set single-structural-objectclass-behavior:accept",
