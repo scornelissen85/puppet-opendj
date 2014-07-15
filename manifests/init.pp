@@ -33,7 +33,8 @@ class opendj (
   $ldapmodify    = "${opendj::home}/bin/ldapmodify ${common_opts} -p ${opendj::ldap_port}"
   $dsconfig      = "${opendj::home}/bin/dsconfig   ${common_opts} -p ${opendj::admin_port} -X -n"
   $dsreplication = "${opendj::home}/bin/dsreplication --adminUID admin --adminPassword ${admin_password} -X -n"
-  $props_file    = "${tmp}/opendj.properties"
+  # props_file Contains passwords, thus (temporarily) stored in /dev/shm
+  $props_file    = "/dev/shm/opendj.properties"
   $base_dn_file  = "${tmp}/base_dn.ldif"
 
   package { "opendj":
