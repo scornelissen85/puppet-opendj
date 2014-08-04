@@ -118,13 +118,15 @@ class opendj (
         --bindPassword ${admin_password} | grep --quiet Started",
   }
 
-  exec { "reject unauthenticated requests":
-    require => Service['opendj'],
-    command => "/bin/su ${user} -s /bin/bash -c \" \
-      $dsconfig set-global-configuration-prop --set reject-unauthenticated-requests:true\"",
-    unless => "/bin/su ${user} -s /bin/bash -c \" \
-      $dsconfig get-global-configuration-prop | grep 'reject-unauthenticated-requests' | grep true\"",
-  }
+## Bug i OpenAM 11. Heartbeats skjer som anonyme binds. Kommenter denne inn naar Forgerock faar fiksa bugen.
+## https://bugster.forgerock.org/jira/browse/OPENAM-3498
+#  exec { "reject unauthenticated requests":
+#    require => Service['opendj'],
+#    command => "/bin/su ${user} -s /bin/bash -c \" \
+#      $dsconfig set-global-configuration-prop --set reject-unauthenticated-requests:true\"",
+#    unless => "/bin/su ${user} -s /bin/bash -c \" \
+#      $dsconfig get-global-configuration-prop | grep 'reject-unauthenticated-requests' | grep true\"",
+#  }
 
 #  exec { "create base dn":
 #    command => "/bin/su ${user} -s /bin/bash -c \"${ldapmodify} -a -f '${base_dn_file}'\"",
