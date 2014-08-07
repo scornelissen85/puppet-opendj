@@ -28,7 +28,7 @@ class opendj (
   $master          = hiera('opendj::master', undef),
   $java_properties = hiera('opendj::java_properties', undef),
 ) {
-  $common_opts   = "-h ${host} -D '${opendj::admin_user}' -w ${opendj::admin_password}"
+  $common_opts   = "-h localhost -D '${opendj::admin_user}' -w ${opendj::admin_password}"
   $ldapsearch    = "${opendj::home}/bin/ldapsearch ${common_opts} -p ${opendj::ldap_port}"
   $ldapmodify    = "${opendj::home}/bin/ldapmodify ${common_opts} -p ${opendj::ldap_port}"
   $dsconfig      = "${opendj::home}/bin/dsconfig   ${common_opts} -p ${opendj::admin_port} -X -n"
