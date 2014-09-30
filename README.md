@@ -1,7 +1,7 @@
 puppet-opendj
 =============
 
-`puppet-opendj` configures your ForgeRock OpenDJ servers for use with OpenAM.
+`puppet-opendj` configures your ForgeRock OpenDJ servers for use with OpenAM. This assumes tha puppet has been installed using the enterprise RPM package provided by Forgerock ( https://backstage.forgerock.com/#!/downloads/OpenDJ ).
 
 ## Usage
 In your hieradata file...
