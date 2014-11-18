@@ -24,7 +24,7 @@ class opendj (
   $user            = hiera('opendj::user', 'opendj'),
   $group           = hiera('opendj::group', 'opendj'),
   $host            = hiera('opendj::host', $fqdn),
-  $tmp             = hiera('opendj::tmpdir', '/tmp'),
+  $tmp             = hiera('opendj::tmpdir', '/dev/shm'),
   $master          = hiera('opendj::master', undef),
   $java_properties = hiera('opendj::java_properties', undef),
 ) {
@@ -66,7 +66,6 @@ class opendj (
     group  => $group,
     mode => 0600,
     require => [File["${home}"], File["${base_dn_file}"]],
-#    require => File["${home}"],
   }
 
   file { "${base_dn_file}":
@@ -76,8 +75,6 @@ class opendj (
     group => $group,
     mode => 0600,
     require => User["${user}"],
-#    require => [User["${user}"], Service['opendj']],
-#    notify => Exec["create base dn"],
   }
 
   file_line { 'file_limits_soft':
@@ -118,7 +115,7 @@ class opendj (
         --bindPassword ${admin_password} | grep --quiet Started",
   }
 
-## Bug i OpenAM 11. Heartbeats skjer som anonyme binds. Kommenter denne inn naar Forgerock faar fiksa bugen.
+## Bug in OpenAM 11. Heartbeats happens as anonymous binds. Comment this back in when Forgerock applies the bugfix.
 ## https://bugster.forgerock.org/jira/browse/OPENAM-3498
 #  exec { "reject unauthenticated requests":
 #    require => Service['opendj'],
@@ -129,6 +126,7 @@ class opendj (
 #  }
 
 #  exec { "create base dn":
+#    require => File["${base_dn_file}"],
 #    command => "/bin/su ${user} -s /bin/bash -c \"${ldapmodify} -a -f '${base_dn_file}'\"",
 #    refreshonly => true,
 #  }
@@ -140,7 +138,7 @@ class opendj (
   }
 
   if ($master != '' and $host != $master) {
-   exec { "enable replication":
+    exec { "enable replication":
       require => Service['opendj'],
       command => "/bin/su ${user} -s /bin/bash -c \"$dsreplication enable \
         --host1 ${master} --port1 ${admin_port} \
