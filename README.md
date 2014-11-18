@@ -27,11 +27,13 @@ opendj::base_dn: dc=example,dc=com
 opendj::home: /opt/opendj
 opendj::user: opendj
 opendj::group: opendj
-opendj::host: opendj.com
 opendj::tmpdir: /tmp
 
+# For node-hostname alias in cases when the default fqdn = unwanted-node-name.example.com
+opendj::host: ldap-node-alias1.example.com
+
 # For slave
-opendj::master: opendj-master.com
+opendj::master: opendj-master-node.example.com
 
 # Overwrite values in ${opendj::home}/config/java.properties
 opendj::java_properties:
