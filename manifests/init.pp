@@ -50,7 +50,6 @@ class opendj (
     groups     => $group,
     comment => 'OpenDJ LDAP daemon',
     home => "${opendj::home}",
-    shell => '/sbin/nologin',
     managehome => true,
     require    => Group["${group}"],
   }
