@@ -48,9 +48,10 @@ class opendj (
   user { $user:
     ensure     => 'present',
     groups     => $group,
-    shell => '/sbin/nologin',
     comment    => 'OpenDJ LDAP daemon',
     home       => $opendj::home,
+    # If no login is specified the server cant start
+    # shell      => '/sbin/nologin',
     managehome => true,
     require    => Group[$group],
   }
